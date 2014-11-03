@@ -41,8 +41,8 @@
         num-word-chars (count (word-chars text))
         ratio (/ num-word-chars num-chars)
         num-spaces (or ((frequencies text) \space) 0)]
-    (and (> ratio 0.7)
-     (> num-spaces 0))))
+    (and (> ratio 0.75)
+     (> num-spaces 1))))
 
 (defn decrypt [ciphertext k]
   (let [key-length (/ (count ciphertext) 2)
@@ -54,6 +54,21 @@
          k 0]
     (let [text (decrypt ciphertext k)]
      (cond 
-       (> k 255) "Key val got too high."
+       (> k 255) nil
        (cracked? text) [k text]
        :else  (recur ciphertext (+ k 2))))))
+
+(defn detect-single-char-xor [file_path]
+  (with-open [rdr (clojure.java.io/reader file_path)]
+    (let [lines (line-seq rdr)
+            cracked-lines (filter identity (map crack lines))]
+      (println cracked-lines)
+      )))
+
+(defn foo [file_path]
+  (with-open [rdr (clojure.java.io/reader file_path)]
+     (take 1 (line-seq rdr))))
+
+(let [lines ["1212", "3434"]]
+  (filter identity  (map crack lines))
+  )
