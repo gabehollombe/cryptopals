@@ -1,5 +1,6 @@
 (ns cryptopals.core
-  (:require [cryptopals.detect :as detect]))
+  (:require [cryptopals.detect :as detect])
+  (:require [clojure.pprint :refer [cl-format]]))
 
 (import org.apache.commons.codec.binary.Base64)
 (import org.apache.commons.codec.binary.Hex)
@@ -20,3 +21,21 @@
   ( -> (dehex hex-str)
        Base64/encodeBase64
        String.))
+
+
+(defn byte-to-binary-string [b]
+  (cl-format nil "~8,'0',B" b))
+
+(defn str-to-bitstring [s]
+  (apply str (map byte-to-binary-string (.getBytes s))))
+
+(defn str-hamming-distance [a b]
+  ; In: strings
+  ; Out: hamming distance (int) for number of differing chars
+  (let [differences (filter false? (map = a b))]
+     (count differences)))
+
+(defn bitwise-hamming-distance [a b]
+  ; In: strings
+  ; Out: hamming distance between 8-bit binary representations of chars in strings
+  (str-hamming-distance (str-to-bitstring a) (str-to-bitstring b)))
