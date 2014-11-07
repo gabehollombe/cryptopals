@@ -22,8 +22,19 @@
        Base64/encodeBase64
        String.))
 
+(defn byte-to-bits [b]
+  ; In: byte
+  ; Out: seq of bits with most signifigant on left
+  ; Ex: 2 -> (f f f f f f t f)
+  (map #(bit-test b %) (range 7 -1 -1)))
+
 (defn str-bytes [s]
   (map (comp byte int) s))
+
+(defn str-bits [s]
+  ; In: string
+  ; Out: sequence of all the bits in the string
+  (flatten (map byte-to-bits (str-bytes s))))
 
 (defn byte-to-binary-string [b]
   (cl-format nil "~8,'0',B" b))
@@ -31,13 +42,15 @@
 (defn str-to-bitstring [s]
   (apply str (map byte-to-binary-string (.getBytes s))))
 
-(defn str-hamming-distance [a b]
-  ; In: strings
-  ; Out: hamming distance (int) for number of differing chars
-  (let [differences (filter false? (map = a b))]
+(defn hamming-distance [as bs]
+  ; In: seqs
+  ; Out: hamming distance (int) for number of differing values in two seqs
+  (let [differences (filter false? (map = (flatten as) (flatten bs)))]
      (count differences)))
 
-(defn bitwise-hamming-distance [a b]
-  ; In: strings
+(defn str-bitwise-hamming-distance [a b]
+  ; In: strs
   ; Out: hamming distance between 8-bit binary representations of chars in strings
-  (str-hamming-distance (str-to-bitstring a) (str-to-bitstring b)))
+  (let [a-bits (str-bits a)
+        b-bits (str-bits b)]
+      (hamming-distance a-bits b-bits)))

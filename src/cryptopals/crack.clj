@@ -1,4 +1,5 @@
 (ns cryptopals.crack
+  (:require [cryptopals.core :refer :all])
   (:require [cryptopals.detect :as detect])
   (:require [cryptopals.crypt :as crypt]))
 
@@ -17,3 +18,11 @@
             cracked-lines (filter identity (map crack lines))]
       (println cracked-lines)
       )))
+
+(defn edit-distance-for-keysize [bytes-arr keysize]
+  (let [block-a (take keysize bytes-arr)
+        block-b (take keysize (nthrest bytes-arr keysize))
+        edit-distance (hamming-distance block-a block-b)
+        normalized (/ edit-distance keysize)
+        ]
+    normalized))
