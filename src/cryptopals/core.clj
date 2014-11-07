@@ -31,26 +31,20 @@
 (defn str-bytes [s]
   (map (comp byte int) s))
 
-(defn str-bits [s]
+(defn str-bytes-as-bits [s]
   ; In: string
   ; Out: sequence of all the bits in the string
-  (flatten (map byte-to-bits (str-bytes s))))
-
-(defn byte-to-binary-string [b]
-  (cl-format nil "~8,'0',B" b))
-
-(defn str-to-bitstring [s]
-  (apply str (map byte-to-binary-string (.getBytes s))))
+  (map byte-to-bits (str-bytes s)))
 
 (defn hamming-distance [as bs]
   ; In: seqs
-  ; Out: hamming distance (int) for number of differing values in two seqs
-  (let [differences (filter false? (map = (flatten as) (flatten bs)))]
+  ; Out: hamming distance (int) for number of differing values
+  (let [differences (filter false? (map = as bs))]
      (count differences)))
 
 (defn str-bitwise-hamming-distance [a b]
   ; In: strs
   ; Out: hamming distance between 8-bit binary representations of chars in strings
-  (let [a-bits (str-bits a)
-        b-bits (str-bits b)]
-      (hamming-distance a-bits b-bits)))
+  (let [a-bits (str-bytes-as-bits a)
+        b-bits (str-bytes-as-bits b)]
+      (hamming-distance (flatten a-bits) (flatten b-bits))))

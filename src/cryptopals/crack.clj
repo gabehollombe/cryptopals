@@ -22,7 +22,7 @@
 (defn edit-distance-for-keysize [bytes-arr keysize]
   (let [block-a (take keysize bytes-arr)
         block-b (take keysize (nthrest bytes-arr keysize))
-        edit-distance (hamming-distance block-a block-b)
+        edit-distance (hamming-distance (flatten block-a) (flatten block-b))
         normalized (/ edit-distance keysize)
         ]
     normalized))
