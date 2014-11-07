@@ -3,18 +3,25 @@
 
 (import org.apache.commons.codec.binary.Hex)
 
+(defn xor [a b]
+  ;; In: 2 seq-ables of numbers
+  ;; Out: XORed byte array
+  (-> (map bit-xor (seq a) (seq b))
+      byte-array))
+
 (defn hex-xor [a b]
   ;; In: 2 strings of hex
   ;; Out: XORed strings as new string
-  (-> (map bit-xor (dehex a) (dehex b))
-      byte-array
+  (-> (xor (dehex a) (dehex b))
       Hex/encodeHexString))
 
 (defn encrypt-repeating-xor [text k]
-  (let [repeated-key (repeat (/ (count text) (count k)) k)
-        hexed-text (hex text)
-        hexed-key  (hex repeated-key)]
-    (hex-xor hexed-text hexed-key)))
+  ;; In: plaintext str and key str
+  ;; Out: hexed ciphertext
+  (let [repeated-key (apply str (repeat (/ (count text) (count k)) k))
+        text-bytes (str-bytes text)
+        repeated-key-bytes (str-bytes repeated-key)]
+    (Hex/encodeHexString (xor text-bytes repeated-key-bytes))))
 
 (defn decrypt [ciphertext k]
   ;; In: ciphertext as string, and key as string

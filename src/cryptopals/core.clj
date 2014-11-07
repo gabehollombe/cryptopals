@@ -22,6 +22,8 @@
        Base64/encodeBase64
        String.))
 
+(defn str-bytes [s]
+  (map (comp byte int) s))
 
 (defn byte-to-binary-string [b]
   (cl-format nil "~8,'0',B" b))
